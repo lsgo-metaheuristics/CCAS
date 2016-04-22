@@ -19,7 +19,6 @@
 #define _USE_MATH_DEFINES
 #include "CCDE.h"
 #include "Benchmarks2010.h"
-#include "StdBenchmarks.h"
 #include "Header.h"
 
 
