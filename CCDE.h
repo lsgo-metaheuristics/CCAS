@@ -4,15 +4,15 @@
 // Name        : CCDE.h
 // Authors     : Giuseppe A. Trunfio - trunfio@uniss.it
 //               Pawel Topa
-//               Jaroslaw Was 
+//               Jaroslaw Was
 // Version     : v1.0
 // Created on  : Mar 20, 2016
 //
 // More details on the following paper:
 //
-// Trunfio, G.A., Topa, P., Was, J. 'An Algorithm for Adapting the Configuration 
+// Trunfio, G.A., Topa, P., Was, J. 'A New Algorithm for Adapting the Configuration
 // of Subcomponents in Large-Scale Optimization with Cooperative Coevolution, submitted'
-// 
+//
 //=======================================================================================
 
 #pragma once
@@ -42,8 +42,8 @@ public:
     double f;
     unsigned subcomponentSize;
     unsigned individuals;
-	ConvPlotPoint(unsigned  _nfe, double _f, unsigned _subcomponentSize, unsigned _individuals) :
-		nfe(_nfe), f(_f), subcomponentSize(_subcomponentSize), individuals(_individuals)
+    ConvPlotPoint(unsigned  _nfe, double _f, unsigned _subcomponentSize, unsigned _individuals) :
+        nfe(_nfe), f(_f), subcomponentSize(_subcomponentSize), individuals(_individuals)
     {};
 };
 
@@ -58,10 +58,10 @@ class CCDE
 {
     Fitness *fitness;
 
-	///Pseudorandom generator
-	RandomEngine eng;
+    ///Pseudorandom generator
+    RandomEngine eng;
 
-	uniform_real<double> unifRandom;
+    uniform_real<double> unifRandom;
 
 public:
     ///Create the CCDE object with the specified optimization parameters
@@ -76,17 +76,17 @@ public:
 
     ///Perform the optimization
     void optimize(Fitness* _function, unsigned int maxNumberOfEvaluations, unsigned sizeOfSubcomponents,
-		unsigned individualsPerSubcomponent, unsigned seed, unsigned nGenPerCycle);
+                  unsigned individualsPerSubcomponent, unsigned seed, unsigned nGenPerCycle);
 
-	void optimize_MLSOFT(Fitness* _function, unsigned int maxNumberOfEvaluations, vector<unsigned> &_subcomponentSizes, unsigned numIndividualsPerSubcomponents,
-		unsigned seed, double tau, unsigned nGenPerCycle);
-    
+    void optimize_MLSOFT(Fitness* _function, unsigned int maxNumberOfEvaluations, vector<unsigned> &_subcomponentSizes, unsigned numIndividualsPerSubcomponents,
+                         unsigned seed, double tau, unsigned nGenPerCycle);
 
-	void optimize_CCAS(Fitness* _function, unsigned int maxNumberOfEvaluations, vector<unsigned> &subcomponentSizes,
-		vector<unsigned> &numIndividualsPerSubcomponents, unsigned seed, unsigned nGenPerCycle, unsigned LCP,
-		double rho, double lambda, double delta, unsigned sigma);
 
-	
+    void optimize_CCAS(Fitness* _function, unsigned int maxNumberOfEvaluations, vector<unsigned> &subcomponentSizes,
+                       vector<unsigned> &numIndividualsPerSubcomponents, unsigned seed, unsigned nGenPerCycle, unsigned LCP,
+                       double rho, double lambda, double delta, unsigned sigma);
+
+
     ///Returns the final fitness value
     double getFinalFitnessValue();
 
@@ -111,30 +111,30 @@ public:
 
     unsigned findDecomposerWithMaxValueFunction();
 
-	unsigned selectDecomposerSoftMax(double tau, vector<Decomposer*> &dec);
+    unsigned selectDecomposerSoftMax(double tau, vector<Decomposer*> &dec);
 
-	unsigned selectDecomposerSoftMax(double tau, vector<double> &valueFunction);
+    unsigned selectDecomposerSoftMax(double tau, vector<double> &valueFunction);
 
     void copySearchState(unsigned bestFitnessDecomposer, unsigned selectedDecomposer);
 
     void selectNextPopulation(unsigned selectedDecomposer, unsigned bestFitnessDecomposer);
 
-	void selectNextPopulation(unsigned selectedDecomposer);
+    void selectNextPopulation(unsigned selectedDecomposer);
 
-	void broadcastSearchState(unsigned sourceDecomposer, double randomRatio);
+    void broadcastSearchState(unsigned sourceDecomposer, double randomRatio);
 
     void optimizeSubcomponents(Decomposer *dec, unsigned nGenPerIteration);
-	
-	typedef enum { avgFitnessGain, stdDev, valueFunction } typeOfDecSort;
-	struct doCompareDecomposers
-	{
-		doCompareDecomposers() { };
 
-		bool operator()(const Decomposer* d1, const Decomposer * d2)
-		{
-			  return d1->valueFunction > d2->valueFunction;
-		}
-	};
+    typedef enum { avgFitnessGain, stdDev, valueFunction } typeOfDecSort;
+    struct doCompareDecomposers
+    {
+        doCompareDecomposers() { };
+
+        bool operator()(const Decomposer* d1, const Decomposer * d2)
+        {
+            return d1->valueFunction > d2->valueFunction;
+        }
+    };
 
     ///Dimensionality of the search space
     unsigned problemDimension;
@@ -174,9 +174,9 @@ public:
     ///Last elapsed time
     double elapsedTime;
     unsigned functionIndex;
-	unsigned maxPopSize;
-    vector<unsigned> subcomponentSizes;    
-	vector<unsigned> numIndividualsPerSubcomponents;	
-	unsigned maxNumberOfEvaluations;			
+    unsigned maxPopSize;
+    vector<unsigned> subcomponentSizes;
+    vector<unsigned> numIndividualsPerSubcomponents;
+    unsigned maxNumberOfEvaluations;
 };
 

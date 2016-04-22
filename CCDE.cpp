@@ -4,15 +4,15 @@
 // Name        : CCDE.cpp
 // Authors     : Giuseppe A. Trunfio - trunfio@uniss.it
 //               Pawel Topa
-//               Jaroslaw Was 
+//               Jaroslaw Was
 // Version     : v1.0
 // Created on  : Mar 20, 2016
 //
 // More details on the following paper:
 //
-// Trunfio, G.A., Topa, P., Was, J. 'An Algorithm for Adapting the Configuration 
+// Trunfio, G.A., Topa, P., Was, J. 'A New Algorithm for Adapting the Configuration
 // of Subcomponents in Large-Scale Optimization with Cooperative Coevolution, submitted'
-// 
+//
 //=======================================================================================
 
 #include "CCDE.h"
@@ -29,7 +29,7 @@
 CCDE::CCDE()
 {
     JADE_c = 0.1;
-    JADE_p = 0.01;
+    JADE_p = 0.1;
 
     JADE_mutationStrategy = 2;
 }
@@ -47,7 +47,7 @@ Decomposer * CCDE::createDecomposer(unsigned sizeOfSubcomponents, unsigned indiv
         allCoordinates.push_back(i);
 
     if ( RG )
-        shuffle(allCoordinates.begin(), allCoordinates.end(), eng);    
+        shuffle(allCoordinates.begin(), allCoordinates.end(), eng);
 
     unsigned seed = unifRandom(eng)*100000;
 
@@ -190,12 +190,12 @@ double CCDE::getFinalFitnessValue()
 void CCDE::optimize(Fitness* _function, unsigned int maxNumberOfEvaluations,
                     unsigned _sizeOfSubcomponents,
                     unsigned individualsPerSubcomponent,
-					unsigned seed, unsigned nGenPerCycle)
+                    unsigned seed, unsigned nGenPerCycle)
 
 {
-	cout << "Using standard CC optimizer..." << endl;
-	
-	eng.seed(seed);
+    cout << "Using standard CC optimizer..." << endl;
+
+    eng.seed(seed);
     numberOfEvaluations = 0;
 
     fitness = _function;
@@ -214,12 +214,12 @@ void CCDE::optimize(Fitness* _function, unsigned int maxNumberOfEvaluations,
 
     Decomposer *dec = createDecomposer(_sizeOfSubcomponents, individualsPerSubcomponent, true);
 
-	ostringstream funcId;  
-	funcId << _function->getID();
-	string outFileName = "STDCC_Function_f" + funcId.str() + ".csv";
-	ofstream outFile;
-	outFile.open(outFileName);
-	outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << _sizeOfSubcomponents << ";" << individualsPerSubcomponent << ";\n";
+    ostringstream funcId;
+    funcId << _function->getID();
+    string outFileName = "STDCC_Function_f" + funcId.str() + ".csv";
+    ofstream outFile;
+    outFile.open(outFileName);
+    outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << _sizeOfSubcomponents << ";" << individualsPerSubcomponent << ";\n";
 
     for (unsigned ite = 0; numberOfEvaluations<maxNumberOfEvaluations; ++ite)
     {
@@ -228,7 +228,7 @@ void CCDE::optimize(Fitness* _function, unsigned int maxNumberOfEvaluations,
             JADE *optimizer = dec->optimizers[j];
             optimizer->loadIndividuals(population);
 
-			optimizer->optimize(nGenPerCycle);
+            optimizer->optimize(nGenPerCycle);
 
             optimizer->storeIndividuals(population);
         }
@@ -237,14 +237,14 @@ void CCDE::optimize(Fitness* _function, unsigned int maxNumberOfEvaluations,
         if ( dec->bestAchievedFitness < globalBestFitness )
             globalBestFitness = dec->bestAchievedFitness;
 
-        dec->randomGrouping();        
+        dec->randomGrouping();
 
-		outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << _sizeOfSubcomponents << ";" << individualsPerSubcomponent << ";\n";
-		cout << numberOfEvaluations << "   " << globalBestFitness << "    " << _sizeOfSubcomponents << "    " << individualsPerSubcomponent << "\n";
+        outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << _sizeOfSubcomponents << ";" << individualsPerSubcomponent << ";\n";
+        cout << numberOfEvaluations << "   " << globalBestFitness << "    " << _sizeOfSubcomponents << "    " << individualsPerSubcomponent << "\n";
     }
     clock_t stopTime = clock();
     elapsedTime = ((double)(stopTime - startTime))/CLOCKS_PER_SEC;
-	outFile.close();
+    outFile.close();
     delete dec;
 }
 
@@ -328,22 +328,22 @@ void CCDE::selectNextPopulation(unsigned activeDecomposer, unsigned bestFitnessD
     vector< vector<double> > population;
 
     decomposers[activeDecomposer]->sortPopulation(Decomposer::fromBestToWorst);
-	decomposers[bestFitnessDecomposer]->sortPopulation(Decomposer::fromBestToWorst);
+    decomposers[bestFitnessDecomposer]->sortPopulation(Decomposer::fromBestToWorst);
 
     for (unsigned i = 0; i < decomposers.size(); ++i)
         population.push_back(decomposers[i]->contextVector);
 
     int i = 0;
-	while (population.size() < decomposers[activeDecomposer]->population.size() &&
-		   i < decomposers[bestFitnessDecomposer]->population.size())
+    while (population.size() < decomposers[activeDecomposer]->population.size() &&
+            i < decomposers[bestFitnessDecomposer]->population.size())
         population.push_back(decomposers[bestFitnessDecomposer]->population[decomposers[bestFitnessDecomposer]->popSort[i++]]);
-	
-	while (population.size() < decomposers[activeDecomposer]->population.size())
-		population.push_back(decomposers[activeDecomposer]->population[decomposers[activeDecomposer]->popSort[i++]]);
+
+    while (population.size() < decomposers[activeDecomposer]->population.size())
+        population.push_back(decomposers[activeDecomposer]->population[decomposers[activeDecomposer]->popSort[i++]]);
 
     decomposers[activeDecomposer]->population = population;
-	decomposers[activeDecomposer]->contextVector = decomposers[bestFitnessDecomposer]->contextVector;
-	decomposers[activeDecomposer]->setOptimizersCoordinatesAndEvaluatePopulation();
+    decomposers[activeDecomposer]->contextVector = decomposers[bestFitnessDecomposer]->contextVector;
+    decomposers[activeDecomposer]->setOptimizersCoordinatesAndEvaluatePopulation();
 }
 
 
@@ -378,7 +378,7 @@ void CCDE::selectNextPopulation(unsigned activeDecomposer)
 
 void CCDE::broadcastSearchState(unsigned sourceDecomposer, double randomRatio)
 {
-	decomposers[sourceDecomposer]->sortPopulation(Decomposer::fromBestToWorst);
+    decomposers[sourceDecomposer]->sortPopulation(Decomposer::fromBestToWorst);
 
     //homogenize JADE parameters among optimizers and decomposers (not really necessary)
     double JADE_mu_cr = 0, JADE_mu_ff = 0;
@@ -415,7 +415,7 @@ void CCDE::broadcastSearchState(unsigned sourceDecomposer, double randomRatio)
     }
 
 
-	//copy the source population
+    //copy the source population
     for (unsigned s = 0; s < decomposers.size(); ++s)
     {
         if (s != sourceDecomposer)
@@ -444,7 +444,7 @@ void CCDE::broadcastSearchState(unsigned sourceDecomposer, double randomRatio)
         }
     }
 
-	//overwrite with some random individuals
+    //overwrite with some random individuals
     for (unsigned s = 0; s < decomposers.size(); ++s)
     {
         for (unsigned i = decomposers[s]->population.size()*randomRatio; i < decomposers[s]->population.size(); ++i)
@@ -496,22 +496,22 @@ void CCDE::optimizeSubcomponents(Decomposer *dec, unsigned nGenPerIteration)
 void CCDE::optimize_CCAS(Fitness* _function,
                          unsigned _maxNumberOfEvaluations,
                          vector<unsigned> &subcomponentSizes,
-                         vector<unsigned> &numIndividualsPerSubcomponents,                         
-						 unsigned seed, 
-						 unsigned nGenPerCycle,
-						 unsigned LCP,
-						 double rho,
-						 double lambda,
-						 double delta,
-						 unsigned sigma)
+                         vector<unsigned> &numIndividualsPerSubcomponents,
+                         unsigned seed,
+                         unsigned nGenPerCycle,
+                         unsigned LCP,
+                         double rho,
+                         double lambda,
+                         double delta,
+                         unsigned sigma)
 {
-	cout << "Using CCAS..." << endl;
+    cout << "Using CCAS..." << endl;
 
-	maxNumberOfEvaluations = _maxNumberOfEvaluations;
-	unsigned fitnessEvaluationsBetweenLearning = maxNumberOfEvaluations*delta;
-	unsigned maxFitnessEvaluationsForLearning = maxNumberOfEvaluations*lambda;				
+    maxNumberOfEvaluations = _maxNumberOfEvaluations;
+    unsigned fitnessEvaluationsBetweenLearning = maxNumberOfEvaluations*delta;
+    unsigned maxFitnessEvaluationsForLearning = maxNumberOfEvaluations*lambda;
     maxPopSize = *max_element(numIndividualsPerSubcomponents.begin(), numIndividualsPerSubcomponents.end());
-    eng.seed(seed);    
+    eng.seed(seed);
     numberOfEvaluations = 0;
     fitness = _function;
     clock_t startTime = clock();
@@ -531,32 +531,32 @@ void CCDE::optimize_CCAS(Fitness* _function,
     unsigned numberOfEvaluationsFromLastLearning = 0;
 
     cout << "Number of generations per cycle =" << nGenPerCycle << endl;
-    cout << "LCP =" << LCP << endl;    
-	cout << "rho =" << rho << endl;
+    cout << "LCP =" << LCP << endl;
+    cout << "rho =" << rho << endl;
     cout << "Max fitness evaluations for comparison phases =" << maxFitnessEvaluationsForLearning << endl;
     cout << "Learning every =" << fitnessEvaluationsBetweenLearning << " function evaluations" << endl;
     cout << "stagnation limit =" << sigma << endl << endl;
 
-	ostringstream funcId;
-	funcId << _function->getID();
-	string outFileName = "CCAS_Function_f" + funcId.str() + ".csv";
-	ofstream outFile;
-	outFile.open(outFileName);
-	outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << ";" << ";\n";    
+    ostringstream funcId;
+    funcId << _function->getID();
+    string outFileName = "CCAS_Function_f" + funcId.str() + ".csv";
+    ofstream outFile;
+    outFile.open(outFileName);
+    outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << ";" << ";\n";
 
     for (unsigned s = 0; s < decomposers.size(); ++s)
     {
-		decomposers[s]->bestAchievedFitness = globalBestFitness;
+        decomposers[s]->bestAchievedFitness = globalBestFitness;
     }
 
-	double prevBestFitness = globalBestFitness;
+    double prevBestFitness = globalBestFitness;
     bool comparisonPhase = true;
     for (unsigned ite = 0; numberOfEvaluations<maxNumberOfEvaluations; ++ite)
     {
-		if (comparisonPhase)
+        if (comparisonPhase)
         {
-			double ff = globalBestFitness;
-			for (unsigned s = 0; s < decomposers.size(); ++s)
+            double ff = globalBestFitness;
+            for (unsigned s = 0; s < decomposers.size(); ++s)
             {
                 decomposers[s]->learningCost = 0;
 
@@ -570,15 +570,15 @@ void CCDE::optimize_CCAS(Fitness* _function,
 
                     decomposers[s]->randomGrouping();
 
-					ff = min(ff, decomposers[s]->bestAchievedFitness);
-					outFile << numberOfEvaluations << ";" << ff << ";" << decomposers[activeDecomposer]->sizeOfSubcomponents << ";" << decomposers[activeDecomposer]->individualsPerSubcomponent << ";\n";
+                    ff = min(ff, decomposers[s]->bestAchievedFitness);
+                    outFile << numberOfEvaluations << ";" << ff << ";" << decomposers[activeDecomposer]->sizeOfSubcomponents << ";" << decomposers[activeDecomposer]->individualsPerSubcomponent << ";\n";
                 }
 
-    			decomposers[s]->valueFunction = max(0.0, globalBestFitness - decomposers[s]->bestAchievedFitness) / decomposers[s]->learningCost;
+                decomposers[s]->valueFunction = max(0.0, globalBestFitness - decomposers[s]->bestAchievedFitness) / decomposers[s]->learningCost;
             }
 
 
-			comparisonPhase = false;
+            comparisonPhase = false;
 
             sort(decomposers.begin(), decomposers.end(), doCompareDecomposers());
 
@@ -601,16 +601,16 @@ void CCDE::optimize_CCAS(Fitness* _function,
             selectNextPopulation(activeDecomposer, bestFitnessDecomposer);
 
             cout << "Selected configuration: subcomponents of size " << decomposers[activeDecomposer]->sizeOfSubcomponents << " with " << decomposers[activeDecomposer]->individualsPerSubcomponent << " individuals" << endl;
-			cout << ite << " " << "NOE=" << numberOfEvaluations << " " << std::scientific << bestFitness << endl;
+            cout << ite << " " << "NOE=" << numberOfEvaluations << " " << std::scientific << bestFitness << endl;
             cout << "== End of comparison phase ==" << endl;
 
             numberOfEvaluationsFromLastLearning = 0;
 
-			globalBestFitness = bestFitness;
-			
-			///
-			decomposers[activeDecomposer]->prevBestFitness = decomposers[activeDecomposer]->bestAchievedFitness; 
-			///
+            globalBestFitness = bestFitness;
+
+            ///
+            decomposers[activeDecomposer]->prevBestFitness = decomposers[activeDecomposer]->bestAchievedFitness;
+            ///
         }
         else
         {
@@ -625,30 +625,30 @@ void CCDE::optimize_CCAS(Fitness* _function,
             decomposers[activeDecomposer]->randomGrouping();
 
             cout << ite << " " << "NOE=" << numberOfEvaluations << " " << std::scientific << globalBestFitness << endl;
-			if (fabs(decomposers[activeDecomposer]->prevBestFitness) > 0)
-			{
-				if (fabs(decomposers[activeDecomposer]->bestAchievedFitness - decomposers[activeDecomposer]->prevBestFitness) / decomposers[activeDecomposer]->prevBestFitness < 1.0E-06)
-					stagnationFlag++;
-				else
-					stagnationFlag = 0;
-			}
+            if (fabs(decomposers[activeDecomposer]->prevBestFitness) > 0)
+            {
+                if (fabs(decomposers[activeDecomposer]->bestAchievedFitness - decomposers[activeDecomposer]->prevBestFitness) / decomposers[activeDecomposer]->prevBestFitness < 1.0E-06)
+                    stagnationFlag++;
+                else
+                    stagnationFlag = 0;
+            }
             //Check if learning should be reactivated
             if (((totalLearningCost<maxFitnessEvaluationsForLearning && numberOfEvaluationsFromLastLearning >= fitnessEvaluationsBetweenLearning) || stagnationFlag>sigma) && decomposers.size()>1)
             {
-                cout << "=== Reactivating comparison phase ===" << endl;                
-				comparisonPhase = true;
-                stagnationFlag = 0;                
+                cout << "=== Reactivating comparison phase ===" << endl;
+                comparisonPhase = true;
+                stagnationFlag = 0;
                 broadcastSearchState(activeDecomposer, 1-rho);
-				prevBestFitness = globalBestFitness;
+                prevBestFitness = globalBestFitness;
             }
 
             decomposers[activeDecomposer]->prevBestFitness = decomposers[activeDecomposer]->bestAchievedFitness;
         }
 
-		outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << decomposers[activeDecomposer]->sizeOfSubcomponents << ";" << decomposers[activeDecomposer]->individualsPerSubcomponent << ";\n";
-    }    
+        outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << decomposers[activeDecomposer]->sizeOfSubcomponents << ";" << decomposers[activeDecomposer]->individualsPerSubcomponent << ";\n";
+    }
     clock_t stopTime = clock();
-	outFile.close();
+    outFile.close();
     elapsedTime = ((double)(stopTime - startTime)) / CLOCKS_PER_SEC;
 }
 
@@ -662,32 +662,32 @@ void CCDE::optimize_CCAS(Fitness* _function,
 //******************************************************************************************/
 unsigned CCDE::selectDecomposerSoftMax(double tau, vector<double> &valueFunction)
 {
-	unsigned numOfDecomposers = valueFunction.size();
-	vector<double> decomposersProb(numOfDecomposers, 0);
+    unsigned numOfDecomposers = valueFunction.size();
+    vector<double> decomposersProb(numOfDecomposers, 0);
 
-	//double norm = sqrt(inner_product(valueFunction.begin(), valueFunction.end(), valueFunction.begin(), 0.0));
-	double norm = *max_element(valueFunction.begin(), valueFunction.end());
-	if (norm < 0.00001)
-		return unifRandom(eng)*numOfDecomposers;
-	transform(valueFunction.begin(), valueFunction.end(), valueFunction.begin(), [norm](double d) -> double { return d / norm; });
+    //double norm = sqrt(inner_product(valueFunction.begin(), valueFunction.end(), valueFunction.begin(), 0.0));
+    double norm = *max_element(valueFunction.begin(), valueFunction.end());
+    if (norm < 0.00001)
+        return unifRandom(eng)*numOfDecomposers;
+    transform(valueFunction.begin(), valueFunction.end(), valueFunction.begin(), [norm](double d) -> double { return d / norm; });
 
-	double den = 0.0;
-	for (unsigned i = 0; i < numOfDecomposers; ++i)
-	{
-		decomposersProb[i] = exp(valueFunction[i] / tau);
-		den += decomposersProb[i];
-	}
-	transform(decomposersProb.begin(), decomposersProb.end(), decomposersProb.begin(), [den](double d) -> double { return d / den; });
+    double den = 0.0;
+    for (unsigned i = 0; i < numOfDecomposers; ++i)
+    {
+        decomposersProb[i] = exp(valueFunction[i] / tau);
+        den += decomposersProb[i];
+    }
+    transform(decomposersProb.begin(), decomposersProb.end(), decomposersProb.begin(), [den](double d) -> double { return d / den; });
 
-	double p = unifRandom(eng);
-	double cumProb = 0;
-	for (unsigned i = 0; i < numOfDecomposers; ++i)
-	{
-		cumProb += decomposersProb[i];
-		if (cumProb >= p)
-			return i;
-	}
-	return numOfDecomposers - 1;
+    double p = unifRandom(eng);
+    double cumProb = 0;
+    for (unsigned i = 0; i < numOfDecomposers; ++i)
+    {
+        cumProb += decomposersProb[i];
+        if (cumProb >= p)
+            return i;
+    }
+    return numOfDecomposers - 1;
 }
 
 
@@ -698,20 +698,20 @@ unsigned CCDE::selectDecomposerSoftMax(double tau, vector<double> &valueFunction
 //******************************************************************************************/
 unsigned CCDE::selectDecomposerSoftMax(double tau, vector<Decomposer*> &dec)
 {
-	unsigned numOfDecomposers = dec.size();
+    unsigned numOfDecomposers = dec.size();
 
-	if (numOfDecomposers == 0)
-	{
-		cerr << "No decomposers available" << endl;
-		exit(1);
-	}
+    if (numOfDecomposers == 0)
+    {
+        cerr << "No decomposers available" << endl;
+        exit(1);
+    }
 
-	vector<double> valueFunction(numOfDecomposers, 0);
+    vector<double> valueFunction(numOfDecomposers, 0);
 
-	for (unsigned i = 0; i < numOfDecomposers; ++i)
-		valueFunction[i] = dec[i]->valueFunction;
+    for (unsigned i = 0; i < numOfDecomposers; ++i)
+        valueFunction[i] = dec[i]->valueFunction;
 
-	return selectDecomposerSoftMax(tau, valueFunction);
+    return selectDecomposerSoftMax(tau, valueFunction);
 }
 
 
@@ -724,18 +724,18 @@ unsigned CCDE::selectDecomposerSoftMax(double tau, vector<Decomposer*> &dec)
 void CCDE::optimize_MLSOFT(Fitness* _function,
                            unsigned int maxNumberOfEvaluations,
                            vector<unsigned> &_subcomponentSizes,
-                           unsigned numIndividualsPerSubcomponents,                           
-						   unsigned seed,
-						   double tau, 
-						   unsigned nGenPerCycle)
+                           unsigned numIndividualsPerSubcomponents,
+                           unsigned seed,
+                           double tau,
+                           unsigned nGenPerCycle)
 {
-	cout << "Using MLSoft..." << endl;
-	cout << "tau = " << tau << endl;
-	cout << "Individuals per subcomponent = " << numIndividualsPerSubcomponents << endl<<endl;
-	
-	subcomponentSizes = _subcomponentSizes;
+    cout << "Using MLSoft..." << endl;
+    cout << "tau = " << tau << endl;
+    cout << "Individuals per subcomponent = " << numIndividualsPerSubcomponents << endl<<endl;
+
+    subcomponentSizes = _subcomponentSizes;
     eng.seed(seed);
-    numberOfEvaluations = 0;    
+    numberOfEvaluations = 0;
     unsigned currentDecomposer = unifRandom(eng)*subcomponentSizes.size();
     unsigned prevDecomposer = currentDecomposer;
     unsigned numOfDecomposers = subcomponentSizes.size();
@@ -758,13 +758,13 @@ void CCDE::optimize_MLSOFT(Fitness* _function,
 
     Decomposer *dec = createDecomposer(subcomponentSizes[currentDecomposer], numIndividualsPerSubcomponents, true);
 
-	ostringstream funcId;
-	funcId << _function->getID();
-	string outFileName = "MLSoft_Function_f" + funcId.str() + ".csv";
-	ofstream outFile;
-	outFile.open(outFileName);
-	outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << subcomponentSizes[currentDecomposer] << ";" << numIndividualsPerSubcomponents << ";\n";
-  
+    ostringstream funcId;
+    funcId << _function->getID();
+    string outFileName = "MLSoft_Function_f" + funcId.str() + ".csv";
+    ofstream outFile;
+    outFile.open(outFileName);
+    outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << subcomponentSizes[currentDecomposer] << ";" << numIndividualsPerSubcomponents << ";\n";
+
     double prevBestFitness = 0;
 
     //main cycle
@@ -799,7 +799,7 @@ void CCDE::optimize_MLSOFT(Fitness* _function,
             JADE *optimizer = dec->optimizers[j];
 
             optimizer->loadIndividuals(population);
-			optimizer->optimize(nGenPerCycle);
+            optimizer->optimize(nGenPerCycle);
             optimizer->storeIndividuals(population);
         }
 
@@ -818,14 +818,14 @@ void CCDE::optimize_MLSOFT(Fitness* _function,
             valueFunction[currentDecomposer] = (valueFunction[currentDecomposer] * decomposersCounters[currentDecomposer] + r) / (decomposersCounters[currentDecomposer] + 1);
         }
 
-        prevBestFitness = globalBestFitness;        
-        
-		outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << subcomponentSizes[currentDecomposer] << ";" << numIndividualsPerSubcomponents << ";\n";
+        prevBestFitness = globalBestFitness;
 
-		cout << numberOfEvaluations << "   " << globalBestFitness << "   " << subcomponentSizes[currentDecomposer] << "   " << numIndividualsPerSubcomponents << "\n";
+        outFile << numberOfEvaluations << ";" << globalBestFitness << ";" << subcomponentSizes[currentDecomposer] << ";" << numIndividualsPerSubcomponents << ";\n";
+
+        cout << numberOfEvaluations << "   " << globalBestFitness << "   " << subcomponentSizes[currentDecomposer] << "   " << numIndividualsPerSubcomponents << "\n";
     }
     clock_t stopTime = clock();
     elapsedTime = ((double)(stopTime - startTime)) / CLOCKS_PER_SEC;
     delete dec;
-	outFile.close();
+    outFile.close();
 }

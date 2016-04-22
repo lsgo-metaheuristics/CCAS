@@ -21,24 +21,24 @@ using namespace std;
 
 class Fitness
 {
-protected:	
-	double minX;
-	double maxX;
-	unsigned dimension;
-	unsigned ID;
+protected:
+    double minX;
+    double maxX;
+    unsigned dimension;
+    unsigned ID;
 public:
-	vector< vector<unsigned> > idealGroups;
+    vector< vector<unsigned> > idealGroups;
 
-	Fitness() {};
-	virtual ~Fitness() {  };
-	virtual double compute(double* x) = 0;
-	virtual double compute(vector<double> x) = 0;
-	virtual void createIdealGroups() = 0;
-	virtual double getMinX() = 0;
-	virtual double getMaxX() = 0;
-	virtual unsigned getID() = 0;
-	virtual unsigned  getDimension() = 0;
-	void setDimension(unsigned d) {};
+    Fitness() {};
+    virtual ~Fitness() {  };
+    virtual double compute(double* x) = 0;
+    virtual double compute(vector<double> x) = 0;
+    virtual void createIdealGroups() = 0;
+    virtual double getMinX() = 0;
+    virtual double getMaxX() = 0;
+    virtual unsigned getID() = 0;
+    virtual unsigned  getDimension() = 0;
+    void setDimension(unsigned d) {};
 };
 
 #endif
