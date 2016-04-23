@@ -8,7 +8,7 @@
 // Version     : v1.0
 // Created on  : Mar 20, 2016
 //
-// More details on the following paper:
+// More details in the following paper:
 //
 // Trunfio, G.A., Topa, P., Was, J. 'A New Algorithm for Adapting the Configuration
 // of Subcomponents in Large-Scale Optimization with Cooperative Coevolution, submitted'
