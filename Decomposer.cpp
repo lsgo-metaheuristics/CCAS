@@ -198,9 +198,9 @@ void Decomposer::randomGrouping()
             optimizers[i]->setCoordinates(&(coordinates[i*numOfCoordinatesPerSubgroup]), numOfCoordinatesPerSubgroup);
             for (int k = 0; k < sizeOfSubcomponents; ++k)
                 coordinateToOptimizer[coordinates[i*numOfCoordinatesPerSubgroup + k]] = optimizers[i];
-            //optimizers[i]->loadIndividuals(population);
-            //optimizers[i]->evaluateParents();
-            //optimizers[i]->updateIndexOfBest();
+            optimizers[i]->loadIndividuals(population);
+            optimizers[i]->evaluateParents();
+            optimizers[i]->updateIndexOfBest();
         }
 
     }
