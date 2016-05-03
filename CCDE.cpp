@@ -226,11 +226,11 @@ void CCDE::optimize(Fitness* _function, unsigned int maxNumberOfEvaluations,
         for(unsigned  j = 0; j < dec->optimizers.size(); ++j)
         {
             JADE *optimizer = dec->optimizers[j];
-            optimizer->loadIndividuals(population);
+            optimizer->loadIndividuals(dec->population);
 
             optimizer->optimize(nGenPerCycle);
 
-            optimizer->storeIndividuals(population);
+            optimizer->storeIndividuals(dec->population);
         }
 
         dec->buildContextVector();
